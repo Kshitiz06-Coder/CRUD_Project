@@ -6,8 +6,8 @@ A clean, minimal React application demonstrating full CRUD operations (Create, R
 
 ## Contributors
 
-- **Sarthak Thapa**(https://github.com/Sarthak05-code)
-- **Kshitiz Khatiwada**(https://github.com/Kshitiz06-Coder)
+- **Sarthak Thapa** -> (https://github.com/Sarthak05-code)
+- **Kshitiz Khatiwada** -> (https://github.com/Kshitiz06-Coder)
 
 ---
 
