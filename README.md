@@ -4,14 +4,12 @@ A clean, minimal React application demonstrating full CRUD operations (Create, R
 
 ---
 
-## Built By
+## Team
 
-<a href="https://github.com/Sarthak05-code">
-  <img src="https://img.shields.io/badge/Sarthak_Thapa-GET%2FPOST%2FSetup-blue?style=flat-square&logo=github" />
-</a>
-<a href="https://github.com/Kshitiz06-Coder">
-  <img src="https://img.shields.io/badge/Kshitiz_Khatiwada-PUT%2FDELETE%2FEdit-green?style=flat-square&logo=github" />
-</a>
+| Name              | GitHub                                                 | Role                                                   |
+| ----------------- | ------------------------------------------------------ | ------------------------------------------------------ |
+| Sarthak Thapa     | [@Sarthak05-code](https://github.com/Sarthak05-code)   | Project setup, GET/POST operations, Tailwind UI, CI/CD |
+| Kshitiz Khatiwada | [@Kshitiz06-Coder](https://github.com/Kshitiz06-Coder) | PUT/DELETE operations, Edit page, API integration      |
 
 ## Features
 
