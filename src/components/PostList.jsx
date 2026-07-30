@@ -13,7 +13,7 @@ export default function PostList() {
         setLoading(true);
         const data = await getAllPosts();
         setPosts(data.slice(0, 10));
-      } catch (err) {
+      } catch {
         setError("Failed to load posts");
       } finally {
         setLoading(false);

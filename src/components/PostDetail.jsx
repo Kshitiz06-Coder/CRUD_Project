@@ -16,7 +16,7 @@ export default function PostDetail() {
         setLoading(true);
         const data = await getPostById(id);
         setPost(data);
-      } catch (err) {
+      } catch {
         setError("Failed to launch the post details, ");
       } finally {
         setLoading(false);

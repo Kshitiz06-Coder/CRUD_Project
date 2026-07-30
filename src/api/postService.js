@@ -1,14 +1,14 @@
-import axios from 'axios';
+import axios from "axios";
 
 // ⚠️ Must have TWO slashes after "https:"
-const BASE_URL = 'https://jsonplaceholder.typicode.com/posts';
+const BASE_URL = "https://jsonplaceholder.typicode.com/posts";
 
 export const getAllPosts = async () => {
   try {
     const response = await axios.get(BASE_URL);
     return response.data;
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error("Error fetching posts:", error);
     throw error;
   }
 };
@@ -28,7 +28,7 @@ export const createPost = async (postData) => {
     const response = await axios.post(BASE_URL, postData);
     return response.data;
   } catch (error) {
-    console.error('Error creating post:', error);
+    console.error("Error creating post:", error);
     throw error;
   }
 };
@@ -36,11 +36,15 @@ export const createPost = async (postData) => {
 // ============================================
 // TODO: YOUR FRIEND WILL IMPLEMENT THESE
 // ============================================
-
+ // this is meant to be replace by you , kshitiz
 export const updatePost = async (id, updatedData) => {
-  throw new Error('updatePost() is not implemented yet - waiting for friend\'s PR 😄');
+  throw new Error(
+    `updatePost(id=${id}) is not implemented yet - ${updatedData} waiting for friend's PR 😄`,
+  );
 };
 
 export const deletePost = async (id) => {
-  throw new Error('deletePost() is not implemented yet - waiting for friend\'s PR 😄');
+  throw new Error(
+    `deletePost(id=${id}) is not implemented yet - waiting for friend's PR 😄`,
+  );
 };
