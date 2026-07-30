@@ -4,12 +4,14 @@ A clean, minimal React application demonstrating full CRUD operations (Create, R
 
 ---
 
-## Contributors
+## Built By
 
-- **Sarthak Thapa** -> (https://github.com/Sarthak05-code)
-- **Kshitiz Khatiwada** -> (https://github.com/Kshitiz06-Coder)
-
----
+<a href="https://github.com/Sarthak05-code">
+  <img src="https://img.shields.io/badge/Sarthak_Thapa-GET%2FPOST%2FSetup-blue?style=flat-square&logo=github" />
+</a>
+<a href="https://github.com/Kshitiz06-Coder">
+  <img src="https://img.shields.io/badge/Kshitiz_Khatiwada-PUT%2FDELETE%2FEdit-green?style=flat-square&logo=github" />
+</a>
 
 ## Features
 
