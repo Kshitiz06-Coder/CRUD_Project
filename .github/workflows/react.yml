@@ -1,0 +1,74 @@
+# =============================================================================
+# CI Pipeline for React CRUD Duo Project
+# =============================================================================
+# This workflow runs on every push and pull request to the main branch.
+# It ensures the project builds successfully and passes linting before merging.
+# =============================================================================
+
+name: CI for react duo project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read # Minimal permissions — only needs to read repo contents
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # -----------------------------------------------------------------------
+      # 1. Checkout
+      # Pulls the repository code so the runner can access the project files.
+      # -----------------------------------------------------------------------
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # -----------------------------------------------------------------------
+      # 2. Setup pnpm
+      # Installs pnpm v10 to match our local development environment.
+      # Using a specific version avoids unexpected breaking changes.
+      # -----------------------------------------------------------------------
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      # -----------------------------------------------------------------------
+      # 3. Setup Node.js
+      # Installs Node v22 (LTS) and enables pnpm caching to speed up installs.
+      # The cache key is derived from pnpm-lock.yaml.
+      # -----------------------------------------------------------------------
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # -----------------------------------------------------------------------
+      # 4. Install dependencies
+      # --frozen-lockfile guarantees the exact versions from pnpm-lock.yaml.
+      # This prevents "works on my machine" bugs caused by version drift.
+      # -----------------------------------------------------------------------
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # -----------------------------------------------------------------------
+      # 5. Lint
+      # Runs ESLint to catch syntax errors and enforce code style.
+      # Fails the build if any linting errors are found.
+      # -----------------------------------------------------------------------
+      - name: Run linter
+        run: pnpm lint
+
+      # -----------------------------------------------------------------------
+      # 6. Build
+      # Creates an optimized production build with Vite.
+      # If this step fails, it usually means a syntax or import error exists.
+      # -----------------------------------------------------------------------
+      - name: Build project
+        run: pnpm build
