@@ -1,36 +1,46 @@
-import axios from "axios";
+import axios from 'axios';
 
-const BASE_URL = "https:://jsonplaceholder.typicode.com/posts";
+// ⚠️ Must have TWO slashes after "https:"
+const BASE_URL = 'https://jsonplaceholder.typicode.com/posts';
 
-// Get all the post
 export const getAllPosts = async () => {
   try {
     const response = await axios.get(BASE_URL);
     return response.data;
   } catch (error) {
-    console.error("Error, fetching post : ", error);
+    console.error('Error fetching posts:', error);
     throw error;
   }
 };
 
-// get one post by id given
-export const getPostById = async () => {
+export const getPostById = async (id) => {
   try {
-    const response = await axios.get(BASE_URL);
-    return response.date;
+    const response = await axios.get(`${BASE_URL}/${id}`);
+    return response.data;
   } catch (error) {
-    console.error("Error found when fetching , ", error);
+    console.error(`Error fetching post ${id}:`, error);
+    throw error;
   }
 };
 
-// Post - create a new post
 export const createPost = async (postData) => {
   try {
     const response = await axios.post(BASE_URL, postData);
     return response.data;
   } catch (error) {
-    console.error("Error found when fetching data", error);
+    console.error('Error creating post:', error);
+    throw error;
   }
 };
 
-// Kshitiz turn , add put and delete here;
+// ============================================
+// TODO: YOUR FRIEND WILL IMPLEMENT THESE
+// ============================================
+
+export const updatePost = async (id, updatedData) => {
+  throw new Error('updatePost() is not implemented yet - waiting for friend\'s PR 😄');
+};
+
+export const deletePost = async (id) => {
+  throw new Error('deletePost() is not implemented yet - waiting for friend\'s PR 😄');
+};
