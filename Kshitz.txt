@@ -1,0 +1,385 @@
+for src/component/Table.jsx
+
+import { Loader } from './Loader';
+
+export const Table = ({ columns, data, renderRow, isLoading }) => {
+  if (isLoading) {
+    return <Loader />;
+  }
+
+  return (
+    <div className="w-full overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm">
+      <table className="w-full text-left text-sm text-gray-600">
+        <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-500 border-b">
+          <tr>
+            {columns.map((col, idx) => (
+              <th key={idx} className="px-6 py-3">{col}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-100">
+          {data && data.length > 0 ? (
+            data.map((item, idx) => renderRow(item, idx))
+          ) : (
+            <tr>
+              <td colSpan={columns.length} className="px-6 py-8 text-center text-gray-400">
+                No records found.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+
+src/components/Pagination.jsx
+
+export const Pagination = ({ currentPage, totalItems, pageSize, onPageChange }) => {
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+
+  if (totalPages <= 1) return null;
+
+  return (
+    <div className="flex items-center justify-between px-2 py-4">
+      <p className="text-sm text-gray-600">
+        Page <span className="font-semibold">{currentPage}</span> of{' '}
+        <span className="font-semibold">{totalPages}</span> ({totalItems} items)
+      </p>
+
+      <div className="flex gap-2">
+        <button
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          className="px-3 py-1.5 text-sm border rounded-md bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => onPageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          className="px-3 py-1.5 text-sm border rounded-md bg-white hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  );
+};
+
+
+src/components/ConfirmDialog.jsx
+
+import { Modal } from './Modal';
+import { Button } from './Button';
+
+export const ConfirmDialog = ({ isOpen, title, message, onConfirm, onCancel, isLoading }) => {
+  return (
+    <Modal isOpen={isOpen} onClose={onCancel} title={title || 'Confirm Action'}>
+      <div className="space-y-4">
+        <p className="text-sm text-gray-600">{message || 'Are you sure you want to proceed?'}</p>
+        <div className="flex justify-end gap-3 pt-2">
+          <Button variant="secondary" onClick={onCancel} disabled={isLoading}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={onConfirm} isLoading={isLoading}>
+            Confirm Delete
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+};
+
+
+src/pages/Employees.jsx
+
+import { useState, useEffect } from 'react';
+import { employeeService } from '../services/employeeService';
+import { Table } from '../components/Table';
+import { Pagination } from '../components/Pagination';
+import { Modal } from '../components/Modal';
+import { ConfirmDialog } from '../components/ConfirmDialog';
+import { Input } from '../components/Input';
+import { Button } from '../components/Button';
+
+export const Employees = () => {
+  const [employees, setEmployees] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Form Modal State
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEmp, setSelectedEmp] = useState(null);
+  const [formData, setFormData] = useState({ firstName: '', lastName: '', email: '', phone: '' });
+  const [submitting, setSubmitting] = useState(false);
+
+  // Confirm Delete State
+  const [deleteId, setDeleteId] = useState(null);
+
+  const limit = 5;
+
+  const fetchEmployees = async () => {
+    setLoading(true);
+    try {
+      const skip = (page - 1) * limit;
+      const data = await employeeService.getAll(limit, skip, search);
+      setEmployees(data.users || []);
+      setTotal(data.total || 0);
+    } catch (err) {
+      console.error('Error fetching employees:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEmployees();
+  }, [page, search]);
+
+  const handleOpenModal = (emp = null) => {
+    setSelectedEmp(emp);
+    setFormData(emp ? { firstName: emp.firstName, lastName: emp.lastName, email: emp.email, phone: emp.phone } : { firstName: '', lastName: '', email: '', phone: '' });
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      if (selectedEmp) {
+        await employeeService.update(selectedEmp.id, formData);
+        setEmployees(employees.map(e => e.id === selectedEmp.id ? { ...e, ...formData } : e));
+      } else {
+        const created = await employeeService.create(formData);
+        setEmployees([created, ...employees]);
+      }
+      setIsModalOpen(false);
+    } catch (err) {
+      console.error('Save failed:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setSubmitting(true);
+    try {
+      await employeeService.delete(deleteId);
+      setEmployees(employees.filter(e => e.id !== deleteId));
+      setDeleteId(null);
+    } catch (err) {
+      console.error('Delete failed:', err);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col sm:flex-row justify-between gap-4 items-center">
+        <Input
+          placeholder="Search employees..."
+          value={search}
+          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+          className="w-full sm:w-72"
+        />
+        <Button onClick={() => handleOpenModal()}>+ Add Employee</Button>
+      </div>
+
+      <Table
+        columns={['Name', 'Email', 'Phone', 'Actions']}
+        data={employees}
+        isLoading={loading}
+        renderRow={(emp) => (
+          <tr key={emp.id} className="hover:bg-gray-50">
+            <td className="px-6 py-4 font-medium text-gray-900">{emp.firstName} {emp.lastName}</td>
+            <td className="px-6 py-4">{emp.email}</td>
+            <td className="px-6 py-4">{emp.phone}</td>
+            <td className="px-6 py-4 flex gap-2">
+              <button onClick={() => handleOpenModal(emp)} className="text-blue-600 hover:underline text-xs font-semibold">Edit</button>
+              <button onClick={() => setDeleteId(emp.id)} className="text-red-600 hover:underline text-xs font-semibold">Delete</button>
+            </td>
+          </tr>
+        )}
+      />
+
+      <Pagination currentPage={page} totalItems={total} pageSize={limit} onPageChange={setPage} />
+
+      {/* Edit/Create Modal */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title={selectedEmp ? 'Edit Employee' : 'Add Employee'}>
+        <form onSubmit={handleSave} className="space-y-3">
+          <Input label="First Name" value={formData.firstName} onChange={e => setFormData({ ...formData, firstName: e.target.value })} required />
+          <Input label="Last Name" value={formData.lastName} onChange={e => setFormData({ ...formData, lastName: e.target.value })} required />
+          <Input label="Email" type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
+          <Input label="Phone" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} required />
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="secondary" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+            <Button type="submit" isLoading={submitting}>Save</Button>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Delete Confirmation */}
+      <ConfirmDialog
+        isOpen={!!deleteId}
+        title="Delete Employee"
+        message="Are you sure you want to remove this employee record?"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteId(null)}
+        isLoading={submitting}
+      />
+    </div>
+  );
+};
+
+src/pages/Products/jsx
+
+
+import { useState, useEffect } from 'react';
+import apiClient from '../api/axios';
+import { Input } from '../components/Input';
+import { Loader } from '../components/Loader';
+import { Modal } from '../components/Modal';
+
+export const Products = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      try {
+        const endpoint = search ? `/products/search?q=${search}` : '/products?limit=12';
+        const response = await apiClient.get(endpoint);
+        let items = response.data.products;
+
+        if (sort === 'asc') items.sort((a, b) => a.price - b.price);
+        if (sort === 'desc') items.sort((a, b) => b.price - a.price);
+
+        setProducts(items);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, [search, sort]);
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row gap-4 justify-between">
+        <Input
+          placeholder="Search products..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-72"
+        />
+        <select
+          value={sort}
+          onChange={(e) => setSort(e.target.value)}
+          className="px-3 py-2 border rounded-md text-sm bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="">Sort by Price</option>
+          <option value="asc">Price: Low to High</option>
+          <option value="desc">Price: High to Low</option>
+        </select>
+      </div>
+
+      {loading ? (
+        <Loader />
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {products.map((prod) => (
+            <div
+              key={prod.id}
+              onClick={() => setSelectedProduct(prod)}
+              className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col justify-between"
+            >
+              <img src={prod.thumbnail} alt={prod.title} className="w-full h-40 object-cover rounded-lg mb-3" />
+              <div>
+                <h3 className="font-semibold text-gray-800 text-sm line-clamp-1">{prod.title}</h3>
+                <p className="text-xs text-gray-500 capitalize mt-0.5">{prod.category}</p>
+              </div>
+              <div className="flex justify-between items-center mt-4 pt-2 border-t border-gray-50">
+                <span className="font-bold text-blue-600">${prod.price}</span>
+                <span className="text-xs text-yellow-600 bg-yellow-50 px-2 py-0.5 rounded">★ {prod.rating}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Details Modal */}
+      <Modal isOpen={!!selectedProduct} onClose={() => setSelectedProduct(null)} title="Product Details">
+        {selectedProduct && (
+          <div className="space-y-3">
+            <img src={selectedProduct.thumbnail} alt={selectedProduct.title} className="w-full h-48 object-cover rounded-lg" />
+            <h4 className="font-bold text-lg">{selectedProduct.title}</h4>
+            <p className="text-sm text-gray-600">{selectedProduct.description}</p>
+            <div className="flex justify-between items-center pt-2">
+              <span className="text-xl font-bold text-blue-600">${selectedProduct.price}</span>
+              <span className="text-sm text-gray-500">Stock: {selectedProduct.stock}</span>
+            </div>
+          </div>
+        )}
+      </Modal>
+    </div>
+  );
+};
+
+
+src/pages/Profile.jsx
+
+import { useState } from 'react';
+import { useAuth } from '../hooks/useAuth';
+
+export const Profile = () => {
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState(true);
+
+  return (
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Profile Card */}
+      <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm flex items-center gap-6">
+        <img
+          src={user?.image || 'https://via.placeholder.com/80'}
+          alt="Avatar"
+          className="w-20 h-20 rounded-full bg-gray-100 border"
+        />
+        <div>
+          <h2 className="text-xl font-bold text-gray-800">{user?.firstName} {user?.lastName}</h2>
+          <p className="text-sm text-gray-500">{user?.email}</p>
+          <span className="inline-block mt-2 px-2.5 py-0.5 text-xs font-semibold bg-blue-50 text-blue-600 rounded-full capitalize">
+            {user?.gender || 'User'}
+          </span>
+        </div>
+      </div>
+
+      {/* Settings Section */}
+      <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm space-y-4">
+        <h3 className="text-lg font-bold text-gray-800 border-b pb-2">Settings</h3>
+
+        <div className="flex items-center justify-between py-2">
+          <div>
+            <p className="text-sm font-medium text-gray-700">Email Notifications</p>
+            <p className="text-xs text-gray-500">Receive system updates and activity logs</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={notifications}
+            onChange={(e) => setNotifications(e.target.checked)}
+            className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer"
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
