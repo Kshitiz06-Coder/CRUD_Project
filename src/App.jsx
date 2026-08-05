@@ -4,17 +4,9 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { DashboardLayout } from "./layouts/DashboardLayout";
 import { Login } from "./pages/Login";
 import { Dashboard } from "./pages/Dashboard";
-
-// Placeholders for your friend's pages so routing stays functional
-const Employees = () => (
-  <div className="p-4 font-medium">Employees Module (Assigned to Teammate)</div>
-);
-const Products = () => (
-  <div className="p-4 font-medium">Products Module (Assigned to Teammate)</div>
-);
-const Profile = () => (
-  <div className="p-4 font-medium">Profile Page (Assigned to Teammate)</div>
-);
+import { Employees } from "./pages/Employees";
+import { Products } from "./pages/Products";
+import { Profile } from "./pages/Profile";
 
 export default function App() {
   return (
