@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect } from 'react';
 import { authService } from '../services/authService';
 
 export const AuthContext = createContext(null);
@@ -6,33 +6,36 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] = useState(true); // <-- fixed: was "State(true)"
+  const [loading, setLoading] = useState(true);
 
-  const logout = useCallback(() => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('token');
-  }, []);
-
+  // Check stored token ONLY once when app first loads
   useEffect(() => {
+    let isMounted = true;
+
     const initAuth = async () => {
-      if (token) {
+      const storedToken = localStorage.getItem('token');
+      if (storedToken) {
         try {
           const userData = await authService.getCurrentUser();
-          setUser(userData);
-        } catch (error) {
-          if (error.response?.status === 401) {
-            console.log("Token expired, clearing session");
-          } else {
-            console.error("Auth check failed:", error);
+          if (isMounted) {
+            setUser(userData);
+            setToken(storedToken);
           }
-          logout();
+        } catch (error) {
+          if (isMounted) {
+            console.log("Token invalid or expired, clearing session");
+            setToken(null);
+            setUser(null);
+            localStorage.removeItem('token');
+          }
         }
       }
-      setLoading(false);
+      if (isMounted) setLoading(false);
     };
+
     initAuth();
-  }, [token, logout]);
+    return () => { isMounted = false; };
+  }, []); // <-- empty: never re-runs, no HMR issues
 
   const login = async (username, password) => {
     const data = await authService.login(username, password);
@@ -40,6 +43,12 @@ export const AuthProvider = ({ children }) => {
     setUser(data);
     localStorage.setItem('token', data.token);
     return data;
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+    localStorage.removeItem('token');
   };
 
   return (
