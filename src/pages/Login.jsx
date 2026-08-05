@@ -19,25 +19,34 @@ export const Login = () => {
     if (errors[e.target.name]) setErrors({ ...errors, [e.target.name]: '' });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validateLoginForm(formData);
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-      return;
-    }
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  console.log("1. Form submitted");
 
-    setLoading(true);
-    setApiError('');
-    try {
-      await login(formData.username, formData.password);
-      navigate('/dashboard');
-    } catch (err) {
-      setApiError(err.response?.data?.message || 'Invalid username or password');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const validationErrors = validateLoginForm(formData);
+  console.log("2. Validation errors:", validationErrors);
+  
+  if (Object.keys(validationErrors).length > 0) {
+    setErrors(validationErrors);
+    console.log("3. Blocked by validation");
+    return;
+  }
+
+  setLoading(true);
+  setApiError('');
+  try {
+    console.log("4. Calling login...");
+    const result = await login(formData.username, formData.password);
+    console.log("5. Login success, result:", result);
+    navigate('/dashboard');
+    console.log("6. Navigate called");
+  } catch (err) {
+    console.log("7. Login FAILED:", err);
+    setApiError(err.response?.data?.message || 'Invalid username or password');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
