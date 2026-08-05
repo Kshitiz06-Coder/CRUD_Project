@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
-  // Check stored token ONLY once when app first loads
+  // Check stored token once on mount
   useEffect(() => {
     let isMounted = true;
 
@@ -35,13 +35,17 @@ export const AuthProvider = ({ children }) => {
 
     initAuth();
     return () => { isMounted = false; };
-  }, []); // <-- empty: never re-runs, no HMR issues
+  }, []);
 
   const login = async (username, password) => {
     const data = await authService.login(username, password);
-    setToken(data.token);
+    
+    // DummyJSON returns accessToken, not token
+    const accessToken = data.accessToken;
+    setToken(accessToken);
     setUser(data);
-    localStorage.setItem('token', data.token);
+    localStorage.setItem('token', accessToken);
+    
     return data;
   };
 
