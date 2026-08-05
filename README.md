@@ -90,11 +90,11 @@ All API requests are handled through a centralized Axios instance with:
 
 ## Architecture Highlights
 
-- **Component Composition** — UI is built from reusable components (`DataTable`, `Modal`, `SearchBar`, `Pagination`) shared across the employee and product modules.
+- **Component Composition** — UI is built from reusable components (`Table`, `Modal`, `Loader`, `Pagination`) shared across the employee and product modules.
 - **Protected Route Guard** — A `&lt;ProtectedRoute&gt;` wrapper checks for a valid token before rendering dashboard pages; unauthenticated users are redirected to `/login`.
 - **Responsive Sidebar** — A collapsible navigation sidebar using Tailwind's responsive prefixes (`md:flex`, `hidden`) and local state for the mobile hamburger menu.
 - **No External Icon Libraries** — All icons are inline SVGs to keep bundle size minimal and avoid dependency bloat.
-- **Environment Configuration** — API base URL is configurable via `.env` variables for easy switching between DummyJSON and a real backend.
+.
 
 ---
 
@@ -105,10 +105,10 @@ All API requests are handled through a centralized Axios instance with:
 git clone https://github.com/yourusername/spa-portal.git
 
 # Install dependencies
-npm install
+pnpm install
 
 # Start the development server
-npm run dev
+pnpm run dev
 
 # Build for production
-npm run build
+pnpm run build
