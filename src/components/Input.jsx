@@ -1,4 +1,4 @@
-export const Input = ({ label, error, className = '', ...props }) => (
+export const Input = ({ label, error, className = "", ...props }) => (
   <div className="space-y-1.5 w-full">
     {label && (
       <label className="block text-sm font-medium text-slate-700">
@@ -11,7 +11,7 @@ export const Input = ({ label, error, className = '', ...props }) => (
         placeholder:text-slate-400
         transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500
-        ${error ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/20' : 'border-slate-200 hover:border-slate-300'}
+        ${error ? "border-rose-300 focus:border-rose-500 focus:ring-rose-500/20" : "border-slate-200 hover:border-slate-300"}
         ${className}
       `}
       {...props}
