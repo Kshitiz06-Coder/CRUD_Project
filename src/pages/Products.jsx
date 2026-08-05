@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import apiClient from '../api/axios';
+import apiClient from '../api/postService';
 import { Input } from '../components/Input';
 import { Loader } from '../components/Loader';
 import { Modal } from '../components/Modal';
