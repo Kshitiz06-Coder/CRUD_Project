@@ -68,7 +68,7 @@ export const Dashboard = () => {
 
   return (
     <div className="space-y-8">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 to-violet-600 p-8 text-white shadow-lg">
+      <div className="relative overflow-hidden rounded-2xl bg-linear-to-r from-indigo-600 to-violet-600 p-8 text-white shadow-lg">
         <div className="relative z-10">
           <h2 className="text-2xl font-bold">Hello, {user?.firstName}! 👋</h2>
           <p className="mt-1 text-indigo-100">

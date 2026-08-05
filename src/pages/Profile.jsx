@@ -8,7 +8,7 @@ export const Profile = () => {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="relative bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="h-32 bg-gradient-to-r from-indigo-600 to-violet-600" />
+        <div className="h-32 bg-linear-to-r from-indigo-600 to-violet-600" />
         <div className="px-8 pb-8">
           <div className="relative -mt-12 mb-4 flex justify-between items-end">
             <img

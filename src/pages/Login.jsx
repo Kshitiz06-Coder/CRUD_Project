@@ -45,7 +45,7 @@ export const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 via-violet-600 to-indigo-800 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-indigo-600 via-violet-600 to-indigo-800 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-1 shadow-2xl">
           <div className="bg-white rounded-2xl shadow-xl p-8 sm:p-10">
@@ -76,7 +76,7 @@ export const Login = () => {
             {apiError && (
               <div className="mb-6 p-4 bg-rose-50 border border-rose-100 text-rose-700 text-sm rounded-xl flex items-center gap-3">
                 <svg
-                  className="h-5 w-5 flex-shrink-0"
+                  className="h-5 w-5 shrink-0"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

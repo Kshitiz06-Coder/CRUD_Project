@@ -12,7 +12,7 @@ export const ConfirmDialog = ({
   <Modal isOpen={isOpen} onClose={onCancel} title={title || "Confirm Action"}>
     <div className="space-y-6">
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 p-2 bg-rose-50 rounded-xl">
+        <div className="shrink-0 p-2 bg-rose-50 rounded-xl">
           <svg
             className="h-6 w-6 text-rose-600"
             fill="none"
