@@ -6,7 +6,7 @@ export const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
-  const [loading, setLoading] =State(true);
+  const [loading, setLoading] = useState(true); // <-- fixed: was "State(true)"
 
   const logout = useCallback(() => {
     setToken(null);
@@ -21,7 +21,6 @@ export const AuthProvider = ({ children }) => {
           const userData = await authService.getCurrentUser();
           setUser(userData);
         } catch (error) {
-          // Don't treat expired token as a crash — just log out silently
           if (error.response?.status === 401) {
             console.log("Token expired, clearing session");
           } else {
