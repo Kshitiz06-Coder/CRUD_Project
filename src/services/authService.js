@@ -5,7 +5,7 @@ export const authService = {
     const response = await apiClient.post("/auth/login", {
       username,
       password,
-      expiresInMins: 60, // 60 = 1 hour. Use 1440 for 24 hours.
+      expiresInMins: 1440, // 24 hours
     });
     return response.data;
   },
