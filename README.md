@@ -118,7 +118,13 @@ pnpm run dev
 
 # Build for production
 pnpm run build
+```
 
 > [!NOTE]
 > Dummyjson is a read-only/mock API. Create, Read, Update, Delete operations return success response but do not persists changes on the server. The UI handles these temporarily to demonstrate a Update operation or a Delete Operation.
-```
+
+---
+
+## Compatibility Note
+
+Just a placeholder here.
